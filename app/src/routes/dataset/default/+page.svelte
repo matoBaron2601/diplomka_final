@@ -1,21 +1,18 @@
-<script>
-	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
+<script lang="ts">
+	import { createQuery } from '@tanstack/svelte-query';
+	import { getUniqueDatasets } from './clientServices/getUniqueDatasets';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import DatasetCard from './components/DatasetCard.svelte';
+
+	const getUniqueDatasetsQuery = createQuery({
+		queryKey: ['get-datasets'],
+		queryFn: async () => await getUniqueDatasets()
+	});
+	console.log($getUniqueDatasetsQuery);
 </script>
 
-<!-- <div>
-	<Breadcrumb.Root>
-		<Breadcrumb.List>
-			<Breadcrumb.Item>
-				<Breadcrumb.Link href="/">Home</Breadcrumb.Link>
-			</Breadcrumb.Item>
-			<Breadcrumb.Separator />
-			<Breadcrumb.Item>
-				<Breadcrumb.Link href="/components">Components</Breadcrumb.Link>
-			</Breadcrumb.Item>
-			<Breadcrumb.Separator />
-			<Breadcrumb.Item>
-				<Breadcrumb.Page>Breadcrumb</Breadcrumb.Page>
-			</Breadcrumb.Item>
-		</Breadcrumb.List>
-	</Breadcrumb.Root>
-</div> -->
+{#if $getUniqueDatasetsQuery.data}
+	{#each $getUniqueDatasetsQuery.data as dataset}
+		<DatasetCard technology={dataset.technology} count={dataset.count} />
+	{/each}
+{/if}
