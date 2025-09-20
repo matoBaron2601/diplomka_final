@@ -1,0 +1,19 @@
+services:
+  typesense:
+    image: typesense/typesense:27.0
+    restart: on-failure
+    ports:
+      - '8108:8108'
+    volumes:
+      - ./typesense-data:/data
+    command: '--data-dir /data --api-key=xyz --enable-cors'
+
+  db:
+    image: postgres
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: mydb
+    ports:
+      - '5432:5432'

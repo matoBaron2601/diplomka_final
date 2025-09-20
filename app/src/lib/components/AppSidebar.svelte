@@ -10,29 +10,29 @@
 	const items = [
 		{
 			title: 'Home',
-			url: '#',
+			url: '/',
 			icon: HouseIcon
 		},
 		{
-			title: 'Inbox',
-			url: '#',
+			title: 'Default Datasets',
+			url: '/dataset/default',
 			icon: InboxIcon
 		},
 		{
-			title: 'Calendar',
-			url: '#',
+			title: 'Custom Datasets',
+			url: '/dataset/custom',
 			icon: CalendarIcon
 		},
 		{
-			title: 'Search',
-			url: '#',
+			title: 'Create quiz',
+			url: '/quiz/create',
 			icon: SearchIcon
 		},
-		{
-			title: 'Settings',
-			url: '#',
-			icon: SettingsIcon
-		}
+				{
+			title: 'Quiz history',
+			url: '/quiz/history',
+			icon: SearchIcon
+		},
 	];
 </script>
 

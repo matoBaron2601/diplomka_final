@@ -1,0 +1,21 @@
+<script lang="ts">
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import PlusIcon from '@lucide/svelte/icons/plus';
+</script>
+
+<div class="flex h-screen w-full justify-center p-4 pt-[15%]">
+	<Card.Root class="h-[400px] w-[400px]">
+		<Card.Content class="flex h-full flex-col items-center justify-center">
+			<p class="mb-4">You have not imported any custom dataset yet.</p>
+			<Button
+				variant="secondary"
+				size="icon"
+				class="flex h-24 w-24 cursor-pointer items-center justify-center rounded-full transition duration-200 hover:bg-gray-400"
+			>
+				<PlusIcon size={60} />
+			</Button>
+		</Card.Content>
+		<Card.Footer></Card.Footer>
+	</Card.Root>
+</div>
