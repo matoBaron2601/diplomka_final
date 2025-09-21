@@ -5,8 +5,8 @@ from analyze_chunks import analyze_chunks
 
 app = Flask(__name__)
 
-@app.route('/rcc', methods=['POST'])
-def rcc():
+@app.route('/rtc', methods=['POST'])
+def rtc():
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
 

@@ -8,7 +8,6 @@
 		queryKey: ['get-datasets'],
 		queryFn: async () => await getUniqueDatasets()
 	});
-	console.log($getUniqueDatasetsQuery);
 </script>
 
 {#if $getUniqueDatasetsQuery.data}

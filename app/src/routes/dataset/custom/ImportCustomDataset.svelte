@@ -2,6 +2,16 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import PlusIcon from '@lucide/svelte/icons/plus';
+	import { createMutation } from '@tanstack/svelte-query';
+
+	const importFileMutation = createMutation({
+		mutationFn: async (file: FormData) => {
+			await fetch('/api/chunker/chunkRTC', {
+				method: 'POST',
+				body: file
+			});
+		}
+	});
 
 	const triggerFileInput = () => {
 		const fileInput = document.getElementById('fileInput');
@@ -17,7 +27,8 @@
 
 			const formData = new FormData();
 			formData.append('file', selectedFile);
-			//TODO MUTATION HERE
+			const result = $importFileMutation.mutate(formData);
+			console.log(result);
 		}
 	};
 </script>

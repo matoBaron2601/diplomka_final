@@ -17,14 +17,11 @@ export const typesenseApi = new Elysia()
 	.post('typesense/collection/default/populate', async () => {
 		return {};
 	})
-	.get('typesense/default/dataset', async () : Promise<UniqueDataset[]> => {
-		console.log("Fetching default datasets");
+	.get('typesense/default/dataset', async (): Promise<UniqueDataset[]> => {
 		return getUniqueDatasetsService({ isDefault: true });
 	})
 	// Custom
-	.get('typesense/collection/custom/populate', async () => {
-		return {};
-	})
-	.get('typesense/custom/dataset', async () => {
-		return {};
+	.get('typesense/collection/custom/populate', async () => {})
+	.get('typesense/custom/dataset', async (): Promise<UniqueDataset[]> => {
+		return getUniqueDatasetsService({ isDefault: false });
 	});

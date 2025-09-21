@@ -1,9 +1,12 @@
 import { Elysia, t } from 'elysia';
 import { typesenseApi } from './typesenseApi';
+import { chunkerApi } from './chunkerApi';
 
 const app = new Elysia({
 	prefix: '/api'
-}).use(typesenseApi);
+})
+	.use(typesenseApi)
+	.use(chunkerApi);
 
 type RequestHandler = (v: { request: Request }) => Response | Promise<Response>;
 
