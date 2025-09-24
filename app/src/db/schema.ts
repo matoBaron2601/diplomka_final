@@ -1,6 +1,6 @@
 import { pgTable, varchar, boolean, timestamp, pgEnum, numeric } from 'drizzle-orm/pg-core';
 import { createId } from '@paralleldrive/cuid2';
-import type { InferInsertModel, InferModel, InferSelectModel } from 'drizzle-orm';
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 
 export const user = pgTable('user', {
 	id: varchar('id')
@@ -26,6 +26,9 @@ export const quiz = pgTable('quiz', {
 	canGoBack: boolean('canGoBack')
 });
 
+export type Quiz = InferSelectModel<typeof quiz>;
+export type NewQuiz = InferInsertModel<typeof quiz>;
+
 export const userQuiz = pgTable('userQuiz', {
 	id: varchar('id')
 		.$defaultFn(() => createId())
@@ -40,6 +43,9 @@ export const userQuiz = pgTable('userQuiz', {
 	submittedAt: timestamp('submittedAt')
 });
 
+export type UserQuiz = InferSelectModel<typeof userQuiz>;
+export type NewUserQuiz = InferInsertModel<typeof userQuiz>;
+
 export const question = pgTable('question', {
 	id: varchar('id')
 		.$defaultFn(() => createId())
@@ -50,6 +56,9 @@ export const question = pgTable('question', {
 	text: varchar('text').notNull()
 });
 
+export type Question = InferSelectModel<typeof question>;
+export type NewQuestion = InferInsertModel<typeof question>;
+
 export const option = pgTable('option', {
 	id: varchar('id')
 		.$defaultFn(() => createId())
@@ -59,6 +68,25 @@ export const option = pgTable('option', {
 		.references(() => question.id),
 	text: varchar('text').notNull(),
 	isCorrect: boolean('isCorrect').notNull()
+});
+
+export type Option = InferSelectModel<typeof option>;
+export type NewOption = InferInsertModel<typeof option>;
+
+export const userAnswer = pgTable('userAnswer', {
+	id: varchar('id')
+		.$defaultFn(() => createId())
+		.primaryKey(),
+	userId: varchar('userId')
+		.notNull()
+		.references(() => user.id),
+	questionId: varchar('questionId')
+		.notNull()
+		.references(() => question.id),
+	optionId: varchar('optionId')
+		.notNull()
+		.references(() => option.id),
+	answeredAt: timestamp('answeredAt').notNull().defaultNow()
 });
 
 export const table = {
