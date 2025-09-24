@@ -1,38 +1,34 @@
 <script lang="ts">
-	import CalendarIcon from '@lucide/svelte/icons/calendar';
-	import HouseIcon from '@lucide/svelte/icons/house';
-	import InboxIcon from '@lucide/svelte/icons/inbox';
-	import SearchIcon from '@lucide/svelte/icons/search';
-	import SettingsIcon from '@lucide/svelte/icons/settings';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import { HomeIcon, FolderCog, Columns3CogIcon, PlusIcon, LucideHistory } from '@lucide/svelte';
 
 	// Menu items.
 	const items = [
 		{
 			title: 'Home',
 			url: '/',
-			icon: HouseIcon
+			icon: HomeIcon
 		},
 		{
 			title: 'Default Datasets',
 			url: '/dataset/default',
-			icon: InboxIcon
+			icon: FolderCog
 		},
 		{
 			title: 'Custom Datasets',
 			url: '/dataset/custom',
-			icon: CalendarIcon
+			icon: Columns3CogIcon
 		},
 		{
 			title: 'Create quiz',
 			url: '/quiz/create',
-			icon: SearchIcon
+			icon: PlusIcon
 		},
-				{
+		{
 			title: 'Quiz history',
 			url: '/quiz/history',
-			icon: SearchIcon
-		},
+			icon: LucideHistory
+		}
 	];
 </script>
 

@@ -5,7 +5,8 @@
     "@types/pg": "^8.15.5",
     "dotevn": "^0.0.1-security",
     "drizzle-orm": "^0.44.5",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "svelte-spa-router": "^4.0.1"
   },
   "devDependencies": {
     "drizzle-kit": "^0.31.4"

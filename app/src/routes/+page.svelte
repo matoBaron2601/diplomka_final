@@ -1,11 +1,5 @@
 <script lang="ts">
-	const fetchData = async () => {
-		const response = await fetch('/api');
-		const data = await response.json();
-		return data;
-	};
+	import PageWrapper from '$lib/components/PageWrapper.svelte';
 </script>
 
-<div>
-	<button on:click={fetchData}>Fetch Data</button>
-</div>
+<PageWrapper>Children</PageWrapper>
