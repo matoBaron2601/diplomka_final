@@ -1,10 +1,13 @@
 import { Elysia, t } from 'elysia';
 import { typesenseApi } from './typesenseApi';
 import { chunkerApi } from './chunkerApi';
-
+import { openapi } from '@elysiajs/openapi';
+import userApi from './userApi';
 const app = new Elysia({
 	prefix: '/api'
 })
+	.use(openapi())
+	.use(userApi)
 	.use(typesenseApi)
 	.use(chunkerApi);
 

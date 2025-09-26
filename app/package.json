@@ -18,9 +18,9 @@
 		"db:makemigrations": "npx drizzle-kit generate",
 		"db:migrate": "npx drizzle-kit migrate",
 		"db:studio": "npx drizzle-kit studio",
-		"createcol":"bun run src/typesense/scripts/createCollection.ts",
-		"deletecol":"bun run src/typesense/scripts/deleteCollection.ts",
-		"populatecol":"bun run src/typesense/scripts/populateCollection.ts"
+		"createcol": "bun run src/typesense/scripts/createCollection.ts",
+		"deletecol": "bun run src/typesense/scripts/deleteCollection.ts",
+		"populatecol": "bun run src/typesense/scripts/populateCollection.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
@@ -58,6 +58,7 @@
 		"vitest-browser-svelte": "^0.1.0"
 	},
 	"dependencies": {
+		"@elysiajs/openapi": "^1.4.11",
 		"@tanstack/svelte-query": "^5.89.0",
 		"elysia": "^1.4.6",
 		"typesense": "^2.1.0"

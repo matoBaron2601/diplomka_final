@@ -1,6 +1,6 @@
 import { db } from '../db/client';
 import { eq } from 'drizzle-orm';
-import { user, type NewUser, type User } from '../db/schema';
+import { user, type NewUser, type UpdateUser, type User } from '../db/schema';
 
 export class UserRepository {
 	async getUserById(userId: string): Promise<User> {
@@ -23,8 +23,8 @@ export class UserRepository {
 		return result[0];
 	}
 
-	async updateUser(newUser: User): Promise<User> {
-		const result = await db.update(user).set(newUser).where(eq(user.id, newUser.id)).returning();
+	async updateUser(userId: string, updateUser: UpdateUser): Promise<User> {
+		const result = await db.update(user).set(updateUser).where(eq(user.id, userId)).returning();
 		return result[0];
 	}
 }

@@ -13,6 +13,7 @@ export const user = pgTable('user', {
 
 export type User = InferSelectModel<typeof user>;
 export type NewUser = InferInsertModel<typeof user>;
+export type UpdateUser = Partial<NewUser>;
 
 export const quiz = pgTable('quiz', {
 	id: varchar('id')

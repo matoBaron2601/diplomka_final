@@ -1,4 +1,4 @@
-import { user, type NewUser, type User } from '../db/schema';
+import { user, type NewUser, type UpdateUser, type User } from '../db/schema';
 import type { UserRepository } from '../repositories/userRepository';
 
 export class UserService {
@@ -30,7 +30,7 @@ export class UserService {
 		return this.userRepository.deleteUserById((await user).id);
 	}
 
-	async updateUser(newUser: User): Promise<User> {
-		return this.userRepository.updateUser(newUser);
+	async updateUser(userId: string, updateUser: UpdateUser): Promise<User> {
+		return this.userRepository.updateUser(userId, updateUser);
 	}
 }
