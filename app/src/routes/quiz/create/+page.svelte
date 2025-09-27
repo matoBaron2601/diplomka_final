@@ -1,5 +1,29 @@
 <script lang="ts">
-	import PageWrapper from '$lib/components/PageWrapper.svelte';
+	type FormValues = {
+		prompt: string;
+	};
+	import { createForm } from 'svelte-forms-lib';
+	import { Input } from '$lib/components/ui/input/index.js';
+
+	const { form, handleSubmit } = createForm<FormValues>({
+		initialValues: {
+			prompt: 'test'
+		},
+		onSubmit: (values: FormValues) => {
+			alert(JSON.stringify(values));
+		}
+	});
 </script>
 
-<PageWrapper>Children</PageWrapper>
+<form on:submit={handleSubmit}>
+	<label for="prompt">Prompt</label>
+	<Input
+		id="prompt"
+		name="prompt"
+		bind:value={$form.prompt}
+		placeholder="Enter the prompt"
+		required
+	/>
+
+	<button type="submit">Create quiz</button>
+</form>

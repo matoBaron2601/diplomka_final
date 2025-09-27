@@ -1,4 +1,4 @@
-import { pgTable, varchar, boolean, timestamp, pgEnum, numeric } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, boolean, timestamp, pgEnum, numeric, integer } from 'drizzle-orm/pg-core';
 import { createId } from '@paralleldrive/cuid2';
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 
@@ -11,9 +11,9 @@ export const user = pgTable('user', {
 	profilePicture: varchar('profilePicture').notNull()
 });
 
-export type User = InferSelectModel<typeof user>;
-export type NewUser = InferInsertModel<typeof user>;
-export type UpdateUser = Partial<NewUser>;
+export type UserDto = InferSelectModel<typeof user>;
+export type NewUserDto = InferInsertModel<typeof user>;
+export type UpdateUserDto = Partial<NewUserDto>;
 
 export const quiz = pgTable('quiz', {
 	id: varchar('id')
@@ -23,12 +23,12 @@ export const quiz = pgTable('quiz', {
 		.notNull()
 		.references(() => user.id),
 	createdAt: timestamp('createdAt').notNull().defaultNow(),
-	timePerQuestion: numeric('timePerQuestion'),
+	timePerQuestion: integer('timePerQuestion'),
 	canGoBack: boolean('canGoBack')
 });
 
-export type Quiz = InferSelectModel<typeof quiz>;
-export type NewQuiz = InferInsertModel<typeof quiz>;
+export type QuizDto = InferSelectModel<typeof quiz>;
+export type NewQuizDto = InferInsertModel<typeof quiz>;
 
 export const userQuiz = pgTable('userQuiz', {
 	id: varchar('id')
@@ -44,8 +44,8 @@ export const userQuiz = pgTable('userQuiz', {
 	submittedAt: timestamp('submittedAt')
 });
 
-export type UserQuiz = InferSelectModel<typeof userQuiz>;
-export type NewUserQuiz = InferInsertModel<typeof userQuiz>;
+export type UserQuizDto = InferSelectModel<typeof userQuiz>;
+export type NewUserQuizDto = InferInsertModel<typeof userQuiz>;
 
 export const question = pgTable('question', {
 	id: varchar('id')
@@ -57,8 +57,8 @@ export const question = pgTable('question', {
 	text: varchar('text').notNull()
 });
 
-export type Question = InferSelectModel<typeof question>;
-export type NewQuestion = InferInsertModel<typeof question>;
+export type QuestionDto = InferSelectModel<typeof question>;
+export type NewQuestionDto = InferInsertModel<typeof question>;
 
 export const option = pgTable('option', {
 	id: varchar('id')
@@ -71,8 +71,8 @@ export const option = pgTable('option', {
 	isCorrect: boolean('isCorrect').notNull()
 });
 
-export type Option = InferSelectModel<typeof option>;
-export type NewOption = InferInsertModel<typeof option>;
+export type OptionDto = InferSelectModel<typeof option>;
+export type NewOptionDto = InferInsertModel<typeof option>;
 
 export const userAnswer = pgTable('userAnswer', {
 	id: varchar('id')

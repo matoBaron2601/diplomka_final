@@ -1,24 +1,34 @@
 import { db } from '../db/client';
 import { eq } from 'drizzle-orm';
-import { option, type NewOption, type Option } from '../db/schema';
+import { option, type NewOptionDto, type OptionDto } from '../db/schema';
+import { type NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
+import { type ExtractTablesWithRelations } from 'drizzle-orm/relations';
+import { type PgTransaction } from 'drizzle-orm/pg-core';
 
 export class OptionRepository {
-	async getOptionById(optionId: string): Promise<Option> {
+	async getOptionById(optionId: string): Promise<OptionDto | undefined> {
 		const result = await db.select().from(option).where(eq(option.id, optionId));
 		return result[0];
 	}
 
-	async createOption(newOption: NewOption): Promise<Option> {
-		const result = await db.insert(option).values(newOption).returning();
+	async createOption(
+		newOption: NewOptionDto,
+		tx: PgTransaction<
+			NodePgQueryResultHKT,
+			Record<string, never>,
+			ExtractTablesWithRelations<Record<string, never>>
+		>
+	): Promise<OptionDto> {
+		const result = await tx.insert(option).values(newOption).returning();
 		return result[0];
 	}
 
-	async deleteOptionById(optionId: string): Promise<Option> {
+	async deleteOptionById(optionId: string): Promise<OptionDto | undefined> {
 		const result = await db.delete(option).where(eq(option.id, optionId)).returning();
 		return result[0];
 	}
 
-	async updateOption(newOption: Option): Promise<Option> {
+	async updateOption(newOption: OptionDto): Promise<OptionDto | undefined> {
 		const result = await db
 			.update(option)
 			.set(newOption)

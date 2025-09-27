@@ -3,11 +3,13 @@ import { typesenseApi } from './typesenseApi';
 import { chunkerApi } from './chunkerApi';
 import { openapi } from '@elysiajs/openapi';
 import userApi from './userApi';
+import { quizApi } from './quizApi';
 const app = new Elysia({
 	prefix: '/api'
 })
 	.use(openapi())
 	.use(userApi)
+	.use(quizApi)
 	.use(typesenseApi)
 	.use(chunkerApi);
 

@@ -1,22 +1,74 @@
-import type { Quiz, NewQuiz } from '../db/schema';
+import type { QuizDto, NewQuizDto, NewQuestionDto, NewOptionDto } from '../db/schema';
+import type { OptionRepository } from '../repositories/optionRepository';
+import type { QuestionRepository } from '../repositories/questionRepository';
 import type { QuizRepository } from '../repositories/quizRepository';
+import { db } from '../db/client';
+import { createQuizSchema } from '../schemas/quizSchema';
+import { type Static } from 'elysia';
+
+export class QuizNotFoundError extends Error {
+	constructor(message: string = 'Quiz not found') {
+		super(message);
+		this.name = 'QuizNotFoundError';
+	}
+}
+
+export type CreateQuiz = Static<typeof createQuizSchema>;
 
 export class QuizService {
-	constructor(private quizRepository: QuizRepository) {}
+	constructor(
+		private quizRepository: QuizRepository,
+		private questionRepository: QuestionRepository,
+		private optionRepository: OptionRepository
+	) {}
 
-	async getQuizById(quizId: string): Promise<Quiz> {
-		return this.quizRepository.getQuizById(quizId);
+	async getQuizById(quizId: string): Promise<QuizDto> {
+		const result = await this.quizRepository.getQuizById(quizId);
+		if (!result) {
+			throw new QuizNotFoundError(`Quiz with id ${quizId} not found`);
+		}
+		return result;
 	}
 
-	async createQuiz(newQuiz: NewQuiz): Promise<Quiz> {
-		return this.quizRepository.createQuiz(newQuiz);
+	async createQuiz(createQuiz: CreateQuiz): Promise<QuizDto> {
+		return await db.transaction(async (tx) => {
+			const newQuiz = await this.quizRepository.createQuiz(createQuiz.quiz, tx);
+			for (const question of createQuiz.questions) {
+				const newQuestion = await this.questionRepository.createQuestion(
+					{
+						quizId: newQuiz.id,
+						text: question.text
+					},
+					tx
+				);
+				for (const option of question.options) {
+					await this.optionRepository.createOption(
+						{
+							text: option.text,
+							isCorrect: option.isCorrect,
+							questionId: newQuestion.id
+						},
+						tx
+					);
+				}
+			}
+			return newQuiz;
+		});
 	}
 
-	async deleteQuizById(quizId: string): Promise<Quiz> {
-		return this.quizRepository.deleteQuizById(quizId);
+	async deleteQuizById(quizId: string): Promise<QuizDto> {
+		const result = await this.quizRepository.deleteQuizById(quizId);
+		if (!result) {
+			throw new QuizNotFoundError(`Quiz with id ${quizId} could not be deleted`);
+		}
+		return result;
 	}
 
-	async updateQuiz(newQuiz: Quiz): Promise<Quiz> {
-		return this.quizRepository.updateQuiz(newQuiz);
+	async updateQuiz(quizId: string, newQuiz: QuizDto): Promise<QuizDto> {
+		const result = await this.quizRepository.updateQuiz(newQuiz);
+		if (!result) {
+			throw new QuizNotFoundError(`Quiz with id ${quizId} was not found`);
+		}
+		return result;
 	}
 }

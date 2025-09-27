@@ -1,13 +1,29 @@
 import { Elysia, t } from 'elysia';
 import { UserRepository } from '../../../repositories/userRepository';
-import { UserService } from '../../../services/userService';
+import {
+	UserCouldNotBeCreatedError,
+	UserNotFoundError,
+	UserService
+} from '../../../services/userService';
 import { createUserSchema, updateUserSchema } from '../../../schemas/userSchema';
 
 const userRepository = new UserRepository();
 const userService = new UserService(userRepository);
 
 export const userApi = new Elysia({ prefix: 'user' })
-
+	.onError(({ code, error, set }) => {
+		switch (true) {
+			case error instanceof UserNotFoundError:
+				set.status = 404;
+			case error instanceof UserCouldNotBeCreatedError:
+				set.status = 409;
+			case code === 'VALIDATION':
+				return;
+			default:
+				set.status = 500;
+				return { message: 'Internal Server Error' };
+		}
+	})
 	.get('/:id', async (req) => {
 		return await userService.getUserById(req.params.id);
 	})
