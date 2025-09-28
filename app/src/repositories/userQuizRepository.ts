@@ -9,24 +9,35 @@ import {
 	type UserDto,
 	type UserQuizDto
 } from '../db/schema';
+import { type NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
+import { type ExtractTablesWithRelations } from 'drizzle-orm/relations';
+import { type PgTransaction } from 'drizzle-orm/pg-core';
 
 export class UserQuizRepository {
-	async getUserQuizById(userQuizId: string): Promise<UserQuizDto> {
+	async getUserQuizById(userQuizId: string): Promise<UserQuizDto | undefined> {
 		const result = await db.select().from(userQuiz).where(eq(userQuiz.id, userQuizId));
 		return result[0];
 	}
 
-	async createUserQuiz(newUserQuiz: NewUserQuizDto): Promise<UserQuizDto> {
-		const result = await db.insert(userQuiz).values(newUserQuiz).returning();
+	async createUserQuiz(
+		newUserQuiz: NewUserQuizDto,
+		tx: PgTransaction<
+			NodePgQueryResultHKT,
+			Record<string, never>,
+			ExtractTablesWithRelations<Record<string, never>>
+		>
+	): Promise<UserQuizDto> {
+		console.log('Creating user quiz:', newUserQuiz);
+		const result = await tx.insert(userQuiz).values(newUserQuiz).returning();
 		return result[0];
 	}
 
-	async deleteUserQuizById(userQuizId: string): Promise<UserQuizDto> {
+	async deleteUserQuizById(userQuizId: string): Promise<UserQuizDto | undefined> {
 		const result = await db.delete(userQuiz).where(eq(userQuiz.id, userQuizId)).returning();
 		return result[0];
 	}
 
-	async updateUserQuiz(newUserQuiz: UserQuizDto): Promise<UserQuizDto> {
+	async updateUserQuiz(newUserQuiz: UserQuizDto): Promise<UserQuizDto | undefined> {
 		const result = await db
 			.update(userQuiz)
 			.set(newUserQuiz)

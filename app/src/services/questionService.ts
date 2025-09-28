@@ -19,10 +19,6 @@ export class QuestionService {
 		return result;
 	}
 
-	async createQuestion(newQuestion: NewQuestionDto): Promise<QuestionDto> {
-		return this.questionRepository.createQuestion(newQuestion);
-	}
-
 	async deleteQuestionById(questionId: string): Promise<QuestionDto> {
 		const result = await this.questionRepository.deleteQuestionById(questionId);
 		if (!result) {

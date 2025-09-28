@@ -20,6 +20,7 @@ export class QuizRepository {
 		>
 	): Promise<QuizDto> {
 		const result = await tx.insert(quiz).values(newQuiz).returning();
+
 		return result[0];
 	}
 

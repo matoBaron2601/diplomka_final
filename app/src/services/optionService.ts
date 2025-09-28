@@ -18,9 +18,6 @@ export class OptionService {
 		}
 		return result;
 	}
-	async createOption(newOption: NewOptionDto): Promise<OptionDto> {
-		return this.optionRepository.createOption(newOption);
-	}
 
 	async deleteOptionById(optionId: string): Promise<OptionDto> {
 		const result = await this.optionRepository.deleteOptionById(optionId);

@@ -1,14 +1,16 @@
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query';
 	import ImportCustomDataset from './ImportCustomDataset.svelte';
-	import { getUniqueDatasets } from '../custom/clientServices/getUniqueDatasets';
+	import { getUniqueDatasets } from '../../clientServices/getUniqueDatasets';
 	import DatasetCard from '../default/components/DatasetCard.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import PageWrapper from '$lib/components/PageWrapper.svelte';
+	import { Dataset } from '../../types';
+	
 	const getUniqueDatasetsQuery = createQuery({
 		queryKey: ['get-datasets'],
-		queryFn: async () => await getUniqueDatasets()
+		queryFn: async () => await getUniqueDatasets(Dataset.CUSTOM)
 	});
 </script>
 

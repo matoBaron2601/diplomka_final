@@ -18,3 +18,8 @@ export const createQuizSchema = t.Object({
 		})
 	)
 });
+
+export const complexCreateQuizSchema = t.Object({
+	prompt: t.String(),
+	technologies: t.Array(t.String())
+});

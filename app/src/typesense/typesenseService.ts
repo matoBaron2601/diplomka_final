@@ -9,6 +9,8 @@ import {
 import collectionSchema from './collectionSchema.json';
 import type { CollectionCreateSchema } from 'typesense/lib/Typesense/Collections';
 import type { PopulateCollectionService, UniqueDataset } from './types';
+import type { SearchResponse } from 'typesense/lib/Typesense/Documents';
+
 export const getCollectionService = async () => {
 	return await getCollection();
 };
@@ -60,4 +62,26 @@ export const getUniqueDatasetsService = async ({
 			count: c.count
 		})) ?? []
 	);
+};
+
+export const getDocumentsByPrompt = async (
+	prompt: string,
+	technologies: string[]
+): Promise<SearchResponse<object>> => {
+	const tags = prompt
+		.split(' ')
+		.map((tag) => tag.trim())
+		.filter((tag) => tag.length > 0);
+	const searchParameters = {
+		q: tags.join(' '),
+		query_by: 'content',
+		per_page: 25,
+		sort_by: '_text_match:desc',
+		filter_by: "technology:=[" + technologies.map((tech) => `"${tech}"`).join(',') + "]",
+	};
+
+	return await getDocuments({
+		collectionName: DEFAULT_COLLECTION_NAME,
+		searchParams: searchParameters
+	});
 };
