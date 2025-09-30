@@ -2,22 +2,33 @@ import { Elysia, t } from 'elysia';
 
 import { QuizRepository } from '../../../repositories/quizRepository';
 import { QuizService } from '../../../services/quizService';
-import { complexCreateQuizSchema, createQuizSchema } from '../../../schemas/quizSchema';
 import { question } from '../../../db/schema';
 import { QuestionRepository } from '../../../repositories/questionRepository';
 import { OptionRepository } from '../../../repositories/optionRepository';
 import { UserQuizRepository } from '../../../repositories/userQuizRepository';
 import { OpenAiService } from '../../../services/openAiService';
+import { UserQuizService } from '../../../services/userQuizService';
+import { QuestionService } from '../../../services/questionService';
+import { OptionService } from '../../../services/optionService';
+import { QuizFacade } from '../../../facades/quizFacade';
+import { createQuizInitialRequestSchema, quizSchema } from '../../../schemas/quizSchema';
+
 const quizRepository = new QuizRepository();
 const questionRepository = new QuestionRepository();
 const optionRepository = new OptionRepository();
 const userQuizRepository = new UserQuizRepository();
 const openAiService = new OpenAiService();
-const quizService = new QuizService(
-	quizRepository,
-	questionRepository,
-	optionRepository,
-	userQuizRepository,
+
+const userQuizService = new UserQuizService(userQuizRepository);
+const questionService = new QuestionService(questionRepository);
+const optionService = new OptionService(optionRepository);
+const quizService = new QuizService(quizRepository);
+
+const quizFacade = new QuizFacade(
+	quizService,
+	userQuizService,
+	questionService,
+	optionService,
 	openAiService
 );
 
@@ -30,25 +41,32 @@ export const quizApi = new Elysia({ prefix: 'quiz' })
 		}
 	})
 
-	.get('/:id', async (req) => {
-		return await quizService.getQuizById(req.params.id);
-	})
-	.post(
-		'/',
+	.get(
+		'/:id',
 		async (req) => {
-			return await quizService.createQuiz(req.body);
+			return await quizFacade.getQuizById(req.params.id);
 		},
 		{
-			body: createQuizSchema
+			response: quizSchema
 		}
 	)
 	.post(
-		'/complex',
+		'/',
 		async (req) => {
-			return await quizService.createComplexQuiz(req.body.prompt, req.body.technologies);
+			return await quizFacade.initialCreateQuiz(req.body);
 		},
 		{
-			body: complexCreateQuizSchema
+			body: createQuizInitialRequestSchema,
+			response: quizSchema
+		}
+	)
+	.get(
+		'/list/:creatorId',
+		async (req) => {
+			return await quizFacade.getQuizzesByCreatorId(req.params.creatorId);
+		},
+		{
+			response: t.Array(quizSchema)
 		}
 	);
 

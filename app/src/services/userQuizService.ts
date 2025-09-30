@@ -1,5 +1,6 @@
-import type { UserQuizDto, NewUserQuizDto } from '../db/schema';
+import type { UserQuizDto, CreateUserQuizDto } from '../db/schema';
 import type { UserQuizRepository } from '../repositories/userQuizRepository';
+import type { Transaction } from '../types';
 
 class UserQuizNotFoundError extends Error {
 	constructor(message: string) {
@@ -19,8 +20,15 @@ export class UserQuizService {
 		return userQuiz;
 	}
 
-	async createUserQuiz(newUserQuiz: NewUserQuizDto): Promise<UserQuizDto> {
+	async createUserQuiz(newUserQuiz: CreateUserQuizDto): Promise<UserQuizDto> {
 		return this.userQuizRepository.createUserQuiz(newUserQuiz);
+	}
+
+	async createUserQuizTransational(
+		newUserQuiz: CreateUserQuizDto,
+		tx: Transaction
+	): Promise<UserQuizDto> {
+		return this.userQuizRepository.createUserQuizTransactional(newUserQuiz, tx);
 	}
 
 	async deleteUserQuizById(userQuizId: string): Promise<UserQuizDto> {

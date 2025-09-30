@@ -1,9 +1,10 @@
 import { db } from '../db/client';
 import { eq } from 'drizzle-orm';
-import { quiz, type NewQuizDto, type QuizDto } from '../db/schema';
+import { quiz, type CreateQuizDto, type QuizDto } from '../db/schema';
 import { type NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
 import { type ExtractTablesWithRelations } from 'drizzle-orm/relations';
 import { type PgTransaction } from 'drizzle-orm/pg-core';
+import type { Transaction } from '../types';
 
 export class QuizRepository {
 	async getQuizById(quizId: string): Promise<QuizDto | undefined> {
@@ -11,16 +12,13 @@ export class QuizRepository {
 		return result[0];
 	}
 
-	async createQuiz(
-		newQuiz: NewQuizDto,
-		tx: PgTransaction<
-			NodePgQueryResultHKT,
-			Record<string, never>,
-			ExtractTablesWithRelations<Record<string, never>>
-		>
-	): Promise<QuizDto> {
-		const result = await tx.insert(quiz).values(newQuiz).returning();
+	async createQuiz(newQuiz: CreateQuizDto): Promise<QuizDto> {
+		const result = await db.insert(quiz).values(newQuiz).returning();
+		return result[0];
+	}
 
+	async createQuizTransactional(newQuiz: CreateQuizDto, tx: Transaction): Promise<QuizDto> {
+		const result = await tx.insert(quiz).values(newQuiz).returning();
 		return result[0];
 	}
 
@@ -32,5 +30,9 @@ export class QuizRepository {
 	async updateQuiz(newQuiz: QuizDto): Promise<QuizDto | undefined> {
 		const result = await db.update(quiz).set(newQuiz).where(eq(quiz.id, newQuiz.id)).returning();
 		return result[0];
+	}
+
+	async getQuizzesByCreatorId(creatorId: string): Promise<QuizDto[]> {
+		return await db.select().from(quiz).where(eq(quiz.creatorId, creatorId));
 	}
 }

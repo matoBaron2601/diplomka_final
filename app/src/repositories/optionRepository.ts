@@ -1,6 +1,6 @@
 import { db } from '../db/client';
 import { eq } from 'drizzle-orm';
-import { option, type NewOptionDto, type OptionDto } from '../db/schema';
+import { option, type CreateOptionDto, type OptionDto } from '../db/schema';
 import { type NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
 import { type ExtractTablesWithRelations } from 'drizzle-orm/relations';
 import { type PgTransaction } from 'drizzle-orm/pg-core';
@@ -12,7 +12,7 @@ export class OptionRepository {
 	}
 
 	async createOption(
-		newOption: NewOptionDto,
+		newOption: CreateOptionDto,
 		tx: PgTransaction<
 			NodePgQueryResultHKT,
 			Record<string, never>,
@@ -35,5 +35,9 @@ export class OptionRepository {
 			.where(eq(option.id, newOption.id))
 			.returning();
 		return result[0];
+	}
+
+	async getOptionsByQuestionId(questionId: string): Promise<OptionDto[]> {
+		return await db.select().from(option).where(eq(option.questionId, questionId));
 	}
 }

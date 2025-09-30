@@ -22,7 +22,7 @@ interface Usage {
 	total_tokens: number; // total number of tokens used
 }
 
-interface OpenAIChatCompletionResponse {
+export interface OpenAIChatCompletionResponse {
 	id: string; // unique identifier for the completion request
 	object: 'chat.completion'; // type of the object returned
 	created: number; // timestamp of creation in Unix time
@@ -31,8 +31,29 @@ interface OpenAIChatCompletionResponse {
 	usage: Usage; // token usage statistics
 }
 
+const prompt = `Please return a JSON response that strictly conforms to the following schema with the creatorId set to "user1". Return only the JSON object, nothing else:
+
+{
+    "quiz": {
+        "creatorId": "user1",
+        "timePerQuestion": null, // Optional - can be a number
+        "canGoBack": null // Optional - can be a boolean
+    },
+    "questions": [
+        {
+            "text": "", // Example: "What is the capital of France?"
+            "options": [
+                {
+                    "text": "", // Example: "Paris"
+                    "isCorrect": false // Example: true or false
+                }
+            ]
+        }
+    ]
+}`;
+
 export class OpenAiService {
-	async callOpenAI(prompt: string): Promise<OpenAIChatCompletionResponse> {
+	async callOpenAI(): Promise<OpenAIChatCompletionResponse> {
 		const response = await axios.post(
 			'https://api.openai.com/v1/chat/completions',
 			{

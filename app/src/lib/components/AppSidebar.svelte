@@ -1,13 +1,19 @@
 <script lang="ts">
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { HomeIcon, FolderCog, Columns3CogIcon, PlusIcon, LucideHistory } from '@lucide/svelte';
+	import {
+		House,
+		FolderCog,
+		Columns3CogIcon,
+		PlusIcon,
+		LucideHistory,
+		PersonStandingIcon
+	} from '@lucide/svelte';
 
-	// Menu items.
 	const items = [
 		{
 			title: 'Home',
 			url: '/',
-			icon: HomeIcon
+			icon: House
 		},
 		{
 			title: 'Default Datasets',
@@ -20,14 +26,19 @@
 			icon: Columns3CogIcon
 		},
 		{
-			title: 'Create quiz',
-			url: '/quiz/create',
-			icon: PlusIcon
+			title: 'My quizzes',
+			url: '/quiz/list/created',
+			icon: PersonStandingIcon
 		},
 		{
 			title: 'Quiz history',
-			url: '/quiz/history',
+			url: '/quiz/list/attended',
 			icon: LucideHistory
+		},
+		{
+			title: 'Create quiz',
+			url: '/quiz/create',
+			icon: PlusIcon
 		}
 	];
 </script>

@@ -1,4 +1,4 @@
-import { user, type NewUserDto, type UpdateUserDto, type UserDto } from '../db/schema';
+import { user, type CreateUserDto, type UpdateUserDto, type UserDto } from '../db/schema';
 import type { UserRepository } from '../repositories/userRepository';
 
 export class UserNotFoundError extends Error {
@@ -14,7 +14,6 @@ export class UserCouldNotBeCreatedError extends Error {
 		this.name = 'UserCouldNotBeCreatedError';
 	}
 }
-
 
 export class UserService {
 	constructor(private userRepository: UserRepository) {}
@@ -35,7 +34,7 @@ export class UserService {
 		return result;
 	}
 
-	async createUser(newUser: NewUserDto): Promise<UserDto> {
+	async createUser(newUser: CreateUserDto): Promise<UserDto> {
 		const result = await this.userRepository.getUserByEmail(newUser.email);
 		if (result) {
 			throw new UserCouldNotBeCreatedError(`User with email ${newUser.email} already exists`);

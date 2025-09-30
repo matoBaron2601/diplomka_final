@@ -4,7 +4,7 @@ import {
 	quiz,
 	user,
 	userQuiz,
-	type NewUserQuizDto,
+	type CreateUserQuizDto,
 	type QuizDto,
 	type UserDto,
 	type UserQuizDto
@@ -12,6 +12,7 @@ import {
 import { type NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
 import { type ExtractTablesWithRelations } from 'drizzle-orm/relations';
 import { type PgTransaction } from 'drizzle-orm/pg-core';
+import type { Transaction } from '../types';
 
 export class UserQuizRepository {
 	async getUserQuizById(userQuizId: string): Promise<UserQuizDto | undefined> {
@@ -19,15 +20,15 @@ export class UserQuizRepository {
 		return result[0];
 	}
 
-	async createUserQuiz(
-		newUserQuiz: NewUserQuizDto,
-		tx: PgTransaction<
-			NodePgQueryResultHKT,
-			Record<string, never>,
-			ExtractTablesWithRelations<Record<string, never>>
-		>
+	async createUserQuiz(newUserQuiz: CreateUserQuizDto): Promise<UserQuizDto> {
+		const result = await db.insert(userQuiz).values(newUserQuiz).returning();
+		return result[0];
+	}
+
+	async createUserQuizTransactional(
+		newUserQuiz: CreateUserQuizDto,
+		tx: Transaction
 	): Promise<UserQuizDto> {
-		console.log('Creating user quiz:', newUserQuiz);
 		const result = await tx.insert(userQuiz).values(newUserQuiz).returning();
 		return result[0];
 	}

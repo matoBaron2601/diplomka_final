@@ -1,22 +1,19 @@
 import { db } from '../db/client';
 import { eq } from 'drizzle-orm';
-import { type QuestionDto, question, type NewQuestionDto } from '../db/schema';
+import { type QuestionDto, question, type CreateQuestionDto } from '../db/schema';
 import { type NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
 import { type ExtractTablesWithRelations } from 'drizzle-orm/relations';
 import { type PgTransaction } from 'drizzle-orm/pg-core';
+import type { Transaction } from '../types';
 export class QuestionRepository {
 	async getQuestionById(questionId: string): Promise<QuestionDto | undefined> {
 		const result = await db.select().from(question).where(eq(question.id, questionId));
 		return result[0];
 	}
 
-	async createQuestion(
-		newQuestion: NewQuestionDto,
-		tx: PgTransaction<
-			NodePgQueryResultHKT,
-			Record<string, never>,
-			ExtractTablesWithRelations<Record<string, never>>
-		>
+	async createQuestionTransactional(
+		newQuestion: CreateQuestionDto,
+		tx: Transaction
 	): Promise<QuestionDto> {
 		const result = await tx.insert(question).values(newQuestion).returning();
 		return result[0];
@@ -34,5 +31,9 @@ export class QuestionRepository {
 			.where(eq(question.id, newQuestion.id))
 			.returning();
 		return result[0];
+	}
+
+	async getQuestionsByQuizId(quizId: string): Promise<QuestionDto[]> {
+		return await db.select().from(question).where(eq(question.quizId, quizId));
 	}
 }

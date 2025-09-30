@@ -1,5 +1,6 @@
-import type { QuestionDto, NewQuestionDto } from '../db/schema';
+import type { QuestionDto, CreateQuestionDto } from '../db/schema';
 import type { QuestionRepository } from '../repositories/questionRepository';
+import type { Transaction } from '../types';
 
 class QuestionNotFoundError extends Error {
 	constructor(message: string = 'Question not found') {
@@ -19,6 +20,13 @@ export class QuestionService {
 		return result;
 	}
 
+	async createQuestionTransactional(
+		newQuestion: CreateQuestionDto,
+		tx: Transaction
+	): Promise<QuestionDto> {
+		return await this.questionRepository.createQuestionTransactional(newQuestion, tx);
+	}
+
 	async deleteQuestionById(questionId: string): Promise<QuestionDto> {
 		const result = await this.questionRepository.deleteQuestionById(questionId);
 		if (!result) {
@@ -31,6 +39,14 @@ export class QuestionService {
 		const result = await this.questionRepository.updateQuestion(newQuestion);
 		if (!result) {
 			throw new QuestionNotFoundError(`Question with id ${newQuestion.id} was not found`);
+		}
+		return result;
+	}
+
+	async getQuestionsByQuizId(quizId: string): Promise<QuestionDto[]> {
+		const result = await this.questionRepository.getQuestionsByQuizId(quizId);
+		if (!result) {
+			throw new QuestionNotFoundError(`Questions for quiz with id ${quizId} not found`);
 		}
 		return result;
 	}

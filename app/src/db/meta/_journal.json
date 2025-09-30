@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1758387111448,
-      "tag": "0000_real_thena",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1758832698375,
-      "tag": "0001_glorious_leo",
+      "when": 1759074559548,
+      "tag": "0000_useful_chronomancer",
       "breakpoints": true
     }
   ]

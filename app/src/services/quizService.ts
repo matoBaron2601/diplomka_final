@@ -1,29 +1,30 @@
-import type { QuizDto } from '../db/schema';
+import type { CreateQuizDto, QuizDto } from '../db/schema';
 import type { OptionRepository } from '../repositories/optionRepository';
 import type { QuestionRepository } from '../repositories/questionRepository';
 import type { QuizRepository } from '../repositories/quizRepository';
 import type { UserQuizRepository } from '../repositories/userQuizRepository';
-import { OpenAiService } from './openAiService';
+import { OpenAiService, type OpenAIChatCompletionResponse } from './openAiService';
 import { db } from '../db/client';
-import { createQuizSchema } from '../schemas/quizSchema';
+import { createQuizRequestSchema } from '../schemas/quizSchema';
 import { type Static } from 'elysia';
 import { getDocumentsByPrompt } from '../typesense/typesenseService';
+import type { UserQuizService } from './userQuizService';
+import { type NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
+import { type ExtractTablesWithRelations } from 'drizzle-orm/relations';
+import { type PgTransaction } from 'drizzle-orm/pg-core';
+import type { QuestionService } from './questionService';
+import type { OptionService } from './optionService';
+import type { Transaction } from '../types';
 export class QuizNotFoundError extends Error {
 	constructor(message: string = 'Quiz not found') {
 		super(message);
 		this.name = 'QuizNotFoundError';
 	}
 }
-export type CreateQuiz = Static<typeof createQuizSchema>;
+export type ComplexQuiz = Static<typeof createQuizRequestSchema>;
 
 export class QuizService {
-	constructor(
-		private quizRepository: QuizRepository,
-		private questionRepository: QuestionRepository,
-		private optionRepository: OptionRepository,
-		private userQuizRepository: UserQuizRepository,
-		private openAiService: OpenAiService
-	) {}
+	constructor(private quizRepository: QuizRepository) {}
 
 	async getQuizById(quizId: string): Promise<QuizDto> {
 		const result = await this.quizRepository.getQuizById(quizId);
@@ -33,39 +34,13 @@ export class QuizService {
 		return result;
 	}
 
-	async createQuiz(createQuiz: CreateQuiz): Promise<QuizDto> {
-		return await db.transaction(async (tx) => {
-			const newQuiz = await this.quizRepository.createQuiz(createQuiz.quiz, tx);
-			await this.userQuizRepository.createUserQuiz(
-				{
-					userId: createQuiz.quiz.creatorId,
-					quizId: newQuiz.id
-				},
-				tx
-			);
-			for (const question of createQuiz.questions) {
-				const newQuestion = await this.questionRepository.createQuestion(
-					{
-						quizId: newQuiz.id,
-						text: question.text
-					},
-					tx
-				);
-				for (const option of question.options) {
-					await this.optionRepository.createOption(
-						{
-							text: option.text,
-							isCorrect: option.isCorrect,
-							questionId: newQuestion.id
-						},
-						tx
-					);
-				}
-			}
-			return newQuiz;
-		});
+	async createQuiz(create: CreateQuizDto) {
+		return await this.quizRepository.createQuiz(create);
 	}
 
+	async createQuizTransactional(create: CreateQuizDto, tx: Transaction): Promise<QuizDto> {
+		return await this.quizRepository.createQuizTransactional(create, tx);
+	}
 	async deleteQuizById(quizId: string): Promise<QuizDto> {
 		const result = await this.quizRepository.deleteQuizById(quizId);
 		if (!result) {
@@ -82,15 +57,11 @@ export class QuizService {
 		return result;
 	}
 
-	async createComplexQuiz(prompt: string, technologies: string[]): Promise<void> {
-		const typesenseDocuments = await getDocumentsByPrompt(prompt, technologies);
-		if (!typesenseDocuments.hits) {
-			throw new Error('No relevant documents found to create a quiz.');
+	async getQuizzesByCreatorId(creatorId: string): Promise<QuizDto[]> {
+		const result = await this.quizRepository.getQuizzesByCreatorId(creatorId);
+		if (!result || result.length === 0) {
+			throw new QuizNotFoundError(`No quizzes found for creator with id ${creatorId}`);
 		}
-
-		const contents = typesenseDocuments.hits.map(
-			(hit) => (hit.document as { content: string }).content
-		);
-		console.log('Retrieved contents from Typesense:', contents[20]);
+		return result;
 	}
 }

@@ -11,7 +11,10 @@
 		[Params.default]: { name: 'Default', href: '/dataset/default' },
 		[Params.quiz]: { name: 'Quiz', href: '' },
 		[Params.create]: { name: 'Create', href: '/quiz/create' },
-		[Params.history]: { name: 'History', href: '/quiz/history' }
+		[Params.history]: { name: 'History', href: '/quiz/history' },
+		[Params.attended]: { name: 'Attended', href: '/quiz/list/attended' },
+		[Params.created]: { name: 'Created', href: '/quiz/list/created' },
+		[Params.list]: { name: 'List', href: '' }
 	};
 </script>
 

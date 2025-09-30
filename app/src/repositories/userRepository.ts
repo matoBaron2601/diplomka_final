@@ -1,6 +1,6 @@
 import { db } from '../db/client';
 import { eq } from 'drizzle-orm';
-import { user, type NewUserDto, type UpdateUserDto, type UserDto } from '../db/schema';
+import { user, type CreateUserDto, type UpdateUserDto, type UserDto } from '../db/schema';
 
 export class UserRepository {
 	async getUserById(userId: string): Promise<UserDto | undefined> {
@@ -13,7 +13,7 @@ export class UserRepository {
 		return result[0];
 	}
 
-	async createUser(newUser: NewUserDto): Promise<UserDto> {
+	async createUser(newUser: CreateUserDto): Promise<UserDto> {
 		const result = await db.insert(user).values(newUser).returning();
 		return result[0];
 	}
